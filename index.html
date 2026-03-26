@@ -210,6 +210,47 @@ body { background: var(--bg); color: var(--text); font-family: 'Plus Jakarta San
 
 /* ─── PAIN POINTS ─── */
 .pain-section { margin-bottom: 24px; }
+
+/* Positive Insights */
+.positive-section { margin-bottom: 24px; }
+.positive-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 24px 26px; box-shadow: var(--shadow-sm);
+}
+.positive-intro {
+  font-size: 13.5px; line-height: 1.85; color: var(--text2);
+  border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 20px;
+}
+.positive-intro strong { color: var(--text); font-weight: 700; }
+.positive-items { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.positive-item {
+  border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px;
+  transition: border-color .18s, box-shadow .18s; position: relative; overflow: hidden;
+}
+.positive-item::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  border-radius: var(--r) var(--r) 0 0;
+}
+.positive-item.green::before { background: linear-gradient(90deg, #059669, #34d399); }
+.positive-item.blue::before  { background: linear-gradient(90deg, #0284c7, #38bdf8); }
+.positive-item.purple::before{ background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+.positive-item.teal::before  { background: linear-gradient(90deg, #0d9488, #2dd4bf); }
+.positive-item.orange::before{ background: linear-gradient(90deg, #d97706, #fbbf24); }
+.positive-item.indigo::before{ background: linear-gradient(90deg, #4f46e5, #818cf8); }
+.positive-item:hover { border-color: #a7f3d0; box-shadow: var(--shadow); }
+.pi-emoji { font-size: 22px; margin-bottom: 8px; }
+.pi-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 5px; line-height: 1.35; }
+.pi-desc  { font-size: 11.5px; color: var(--text3); line-height: 1.55; margin-bottom: 10px; }
+.pi-bar-wrap { height: 4px; background: var(--bg); border-radius: 2px; overflow: hidden; margin-bottom: 8px; }
+.pi-bar { height: 100%; border-radius: 2px; }
+.pi-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.pi-tag { font-size: 10.5px; padding: 2px 7px; border-radius: 4px; font-weight: 600; }
+.tag-green  { background: #d1fae5; color: #059669; }
+.tag-teal   { background: #ccfbf1; color: #0d9488; }
+.tag-blue2  { background: #dbeafe; color: #1d4ed8; }
+.tag-purple2{ background: #ede9fe; color: #6d28d9; }
+@media(max-width:1100px) { .positive-items { grid-template-columns: 1fr 1fr; } }
+@media(max-width:768px)  { .positive-items { grid-template-columns: 1fr; } }
 .pain-card {
   background: var(--white); border: 1px solid var(--border);
   border-radius: var(--r-lg); padding: 24px 26px; box-shadow: var(--shadow-sm);
@@ -435,6 +476,10 @@ tr:hover td { background: #fafbff; }
   <!-- FILTERS -->
   <div class="filter-card fade-up">
     <div class="filter-row">
+      <div class="fg" id="clientFilterGroup">
+        <div class="fl">🏢 Client</div>
+        <select class="fs" id="fClient" onchange="applyFilters()" style="min-width:180px"><option value="">All Clients</option></select>
+      </div>
       <div class="fg">
         <div class="fl">Status</div>
         <select class="fs" id="fStatus" onchange="applyFilters()"><option value="">All Statuses</option></select>
@@ -442,10 +487,6 @@ tr:hover td { background: #fafbff; }
       <div class="fg">
         <div class="fl">Request Type</div>
         <select class="fs" id="fType" onchange="applyFilters()"><option value="">All Types</option></select>
-      </div>
-      <div class="fg">
-        <div class="fl">Department</div>
-        <select class="fs" id="fDept" onchange="applyFilters()"><option value="">All Departments</option></select>
       </div>
       <div class="fg">
         <div class="fl">Priority</div>
@@ -473,6 +514,21 @@ tr:hover td { background: #fafbff; }
         </div>
       </div>
       <button class="btn-reset" onclick="resetFilters()">↺ Reset</button>
+    </div>
+  </div>
+
+  <!-- Client Active Banner -->
+  <div id="clientBanner" style="display:none;background:linear-gradient(135deg,#eef2ff,#ede9fe);border:1.5px solid #c7d2fe;border-radius:12px;padding:14px 20px;margin-bottom:18px;display:none;align-items:center;justify-content:space-between;gap:16px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#4f46e5,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏢</div>
+      <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#7c3aed;margin-bottom:2px">Viewing Client</div>
+        <div id="clientBannerName" style="font-size:16px;font-weight:800;color:#1a1d2e"></div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px">
+      <div id="clientBannerStats" style="font-size:12px;color:#5c6078"></div>
+      <button onclick="clearClientFilter()" style="padding:7px 14px;border-radius:8px;border:1.5px solid #c7d2fe;background:#fff;color:#4f46e5;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s" onmouseover="this.style.background='#4f46e5';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='#4f46e5'">✕ Clear Client Filter</button>
     </div>
   </div>
 
@@ -506,13 +562,7 @@ tr:hover td { background: #fafbff; }
       <div class="kpi-value" id="kP1" style="color:var(--red)">0</div>
       <div class="kpi-sub" id="kP1Sub">—</div>
     </div>
-    <div class="kpi fade-up fade-up-3">
-      <div class="kpi-stripe" style="background:linear-gradient(90deg,#0284c7,#0ea5e9)"></div>
-      <div class="kpi-icon" style="background:var(--blue-light)">🏢</div>
-      <div class="kpi-label">Accounts</div>
-      <div class="kpi-value" id="kAccounts" style="color:var(--blue)">0</div>
-      <div class="kpi-sub" id="kAccountsSub">—</div>
-    </div>
+
   </div>
 
   <!-- CHARTS ROW 1 -->
@@ -554,6 +604,15 @@ tr:hover td { background: #fafbff; }
     <div class="pain-card">
       <div class="pain-intro" id="painIntro">Analysing…</div>
       <div class="pain-items" id="painItems"></div>
+    </div>
+  </div>
+
+  <!-- POSITIVE INSIGHTS -->
+  <div class="positive-section fade-up">
+    <div class="sec-title"><div class="sec-title-dot" style="background:var(--green)"></div>✨ Positive Insights — What's Working Well</div>
+    <div class="positive-card">
+      <div class="positive-intro" id="positiveIntro">Analysing…</div>
+      <div class="positive-items" id="positiveItems"></div>
     </div>
   </div>
 
@@ -682,6 +741,13 @@ function handleFile(file) {
   reader.readAsArrayBuffer(file);
 }
 
+function isWeekHeader(val) {
+  if (!val) return false;
+  const s = String(val).trim().toLowerCase();
+  // Matches patterns like "16 feb - 20 feb 2026", "2 march 2026 - 6 march 2026", etc.
+  return /\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\b/.test(s) && /\d{4}/.test(s);
+}
+
 function parseWorkbook(wb) {
   const records = [];
   wb.SheetNames.forEach(sheetName => {
@@ -728,6 +794,10 @@ function parseWorkbook(wb) {
         const row = raw[i] || [];
         const acc = safeVal(row[colMap.account]);
         if (!acc) continue;
+        // Skip rows that look like week/date range headers
+        if (isWeekHeader(acc)) continue;
+        // Skip rows where the "account" cell matches column header values (repeated headers)
+        if (/^(account\s*name|account)$/i.test(acc)) continue;
         records.push({
           year: sheetYear,
           week: null,
@@ -785,7 +855,11 @@ function safeDate(v) {
 
 function applyUpload() {
   if (!pendingUploadData) return;
+  // Fully replace ALL data — seed data is discarded
   RAW_DATA = pendingUploadData;
+  filteredData = [...RAW_DATA];
+  currentSorted = [];
+  currentPage = 1;
   resetFiltersInternal();
   rebuildFilterDropdowns();
   closeUpload();
@@ -795,17 +869,115 @@ function applyUpload() {
 // ════════════════════════════════════════════════
 //  FILTERS
 // ════════════════════════════════════════════════
+// ════════════════════════════════════════════════
+//  CLIENT ALIAS MAP — normalises duplicates/typos to canonical names
+// ════════════════════════════════════════════════
+const CLIENT_ALIASES = {
+  // Aryaduta
+  'aryadutta':'Aryaduta',
+  // Astor Goa
+  'astor':'Astor Goa',
+  // Astor Kolkata
+  'astor kolkata':'Astor Kolkata','astor kolkata & its restaurants':'Astor Kolkata',
+  // Blue Water Maribago
+  'blue water':'Blue Water Maribago','bluewater':'Blue Water Maribago',
+  // Caravela Beach Resort
+  'caravela':'Caravela Beach Resort','caravella':'Caravela Beach Resort',
+  'caravela beach resort':'Caravela Beach Resort','caravela beach resort goa':'Caravela Beach Resort',
+  'caravela beach resort quarterly report':'Caravela Beach Resort','cravela':'Caravela Beach Resort',
+  'caravela beach resort quarterly':'Caravela Beach Resort',
+  // Cauayan
+  'cauayan':'Cauayan Resorts',
+  // Continent
+  'continent alkhobar':'Continent',
+  // Denissons Hotel
+  'denisson':'Denissons Hotel','dennision':'Denissons Hotel','dennison':'Denissons Hotel',
+  // Espire
+  'espire hospitality':'Espire Hospitality',
+  // Golkonda
+  'gokonda hotel':'Golkonda','golkonda hotel':'Golkonda','golkonda rajnish':'Golkonda',
+  'golkonda resort':'Golkonda','golkonda resort & spa':'Golkonda','golkonda resort and spa':'Golkonda',
+  'golkonda resorts':'Golkonda','golkondalalit':'Golkonda','golonda resorts and spa':'Golkonda',
+  'the golkonda hotel':'Golkonda','golkonda resort & spa':'Golkonda',
+  // Heritage
+  'heritage':'Heritage Village Resort','heritage goa':'Heritage Village Resort',
+  'heritage manesar':'Heritage Village Resort','heritage manesar & goa':'Heritage Village Resort',
+  'heritage resorts':'Heritage Village Resort','heritage spa and resorts':'Heritage Village Resort',
+  'heritage village reosrt spa':'Heritage Village Resort',
+  'heritage village resort & spa manesar':'Heritage Village Resort',
+  'heritage village resort & spa, goa':'Heritage Village Resort',
+  'heritage village resort manesar':'Heritage Village Resort',
+  'heritage village resorts goa':'Heritage Village Resort',
+  'heritage village resorts manesar':'Heritage Village Resort',
+  'the heritage manesar':'Heritage Village Resort',
+  // Hotel Lakend
+  'lakend':'Hotel Lakend','lakend jaisamond':'Hotel Lakend',
+  // Kenilworth
+  'kenilworth goa':'Kenilworth','kenilworth goa & kolkata':'Kenilworth',
+  'kenilworth resort & spa, goa':'Kenilworth',
+  // Kondody
+  'kondody':'Kondody Group','kondody hive wayanad':'Kondody Group',
+  // Lalit
+  'lalit':'Lalit','lalit (elisha)':'Lalit','lalit ashok':'Lalit',
+  'lalit baljinder':'Lalit','lalait baljinder':'Lalit','lalit banglore':'Lalit',
+  'lalit bangore':'Lalit','lalit bekal':'Lalit','lalit delhi':'Lalit',
+  'lalit delhi ( baljinder )':'Lalit','lalit kolkata & banglore':'Lalit',
+  'lalit new delhi':'Lalit','lalit udaipur':'Lalit','llait':'Lalit','llait mumbai':'Lalit',
+  'the lalit great eastern kolkata':'Lalit','the lalit':'Lalit',
+  // MRS Group
+  'mrs':'MRS Group','mrs / narendr bhwawan':'MRS Group','mrs group':'MRS Group','mrs group':'MRS Group',
+  // MSG 91
+  'msg':'MSG 91',
+  // Narendra Bhawan
+  'narendra bhawan':'Narendra Bhawan',
+  // Papandayan
+  'papandyan':'Papandayan',
+  // Pi42
+  'pi42':'Pi42',
+  // Radhe ki Haveli
+  'radhe ki haveli':'Radhe ki Haveli','radhe ki haweli':'Radhe ki Haveli',
+  // Raintree
+  'hotel raintree':'Raintree','raintree':'Raintree',
+  'the rain tree':'Raintree','the raintree':'Raintree',
+  // Renest
+  'renest goa':'Renest','renest haridwar':'Renest','renest jaipur':'Renest',
+  'renest screen shots':'Renest','renest shirdi':'Renest','renst gandhidham':'Renest',
+  'rnest tirupati':'Renest','renes hariswar':'Renest',
+  // Residency
+  'resdency':'Residency','residency coimbatoore':'Residency','residency coinbatore':'Residency',
+  'residency puducherry':'Residency','the residency':'Residency',
+  'the residency towers':'Residency','the residency towers coimbatore':'Residency',
+  // Riva Resort
+  'riva':'Riva Resort',
+  // Singapore Flyer
+  'sg flyer':'Singapore Flyer','singapore flyer':'Singapore Flyer',
+  // Tanishq / Titan
+  'tansihq':'Tanishq','titan':'Tanishq',
+  // Tunga
+  'tunga':'Tunga',
+};
+
+function normaliseClient(raw) {
+  if (!raw) return null;
+  const key = raw.trim().toLowerCase();
+  return CLIENT_ALIASES[key] || raw.trim();
+}
+
 function rebuildFilterDropdowns() {
   const statuses = [...new Set(RAW_DATA.map(r => r.delivery_status).filter(Boolean))].sort();
   const types = [...new Set(RAW_DATA.map(r => r.type).filter(Boolean))].sort();
-  const depts = [...new Set(RAW_DATA.map(r => r.department).filter(Boolean).map(d => d.trim()))].sort();
-  const rebuild = (id, opts) => {
+
+  // Build sorted unique canonical client list using alias normalisation
+  const clientSet = new Set();
+  RAW_DATA.forEach(r => { if (r.account) clientSet.add(normaliseClient(r.account)); });
+  const clients = [...clientSet].filter(Boolean).sort((a,b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+  const rebuild = (id, opts, allLabel) => {
     const el = document.getElementById(id);
-    el.innerHTML = '<option value="">All</option>' + opts.map(o => `<option value="${esc(o)}">${esc(o)}</option>`).join('');
+    el.innerHTML = `<option value="">${allLabel||'All'}</option>` + opts.map(o => `<option value="${esc(o)}">${esc(o)}</option>`).join('');
   };
+  rebuild('fClient', clients, 'All Clients');
   rebuild('fStatus', statuses);
   rebuild('fType', types);
-  rebuild('fDept', depts);
 }
 
 function setYear(y) {
@@ -815,9 +987,9 @@ function setYear(y) {
 }
 
 function applyFilters() {
+  const client = document.getElementById('fClient').value;
   const status = document.getElementById('fStatus').value;
   const type = document.getElementById('fType').value;
-  const dept = document.getElementById('fDept').value;
   const priority = document.getElementById('fPriority').value;
   const dateFrom = document.getElementById('fDateFrom').value;
   const dateTo = document.getElementById('fDateTo').value;
@@ -825,9 +997,9 @@ function applyFilters() {
 
   filteredData = RAW_DATA.filter(r => {
     if (activeYear !== 'all' && r.year !== activeYear) return false;
+    if (client && normaliseClient(r.account) !== client) return false;
     if (status && (r.delivery_status||'') !== status) return false;
     if (type && (r.type||'') !== type) return false;
-    if (dept && (r.department||'').trim() !== dept) return false;
     if (priority) { const p = String(r.priority||'').replace('.0',''); if (p !== priority) return false; }
     if (dateFrom && r.date_received && r.date_received < dateFrom) return false;
     if (dateTo && r.date_received && r.date_received > dateTo) return false;
@@ -842,7 +1014,7 @@ function applyFilters() {
 }
 
 function resetFiltersInternal() {
-  ['fStatus','fType','fDept','fPriority'].forEach(id => { try { document.getElementById(id).value = ''; } catch{} });
+  ['fClient','fStatus','fType','fPriority'].forEach(id => { try { document.getElementById(id).value = ''; } catch{} });
   ['fDateFrom','fDateTo'].forEach(id => { try { document.getElementById(id).value = ''; } catch{} });
   try { document.getElementById('fSearch').value = ''; } catch{}
   activeYear = 'all';
@@ -857,8 +1029,30 @@ function updateAll() {
   updateKPIs();
   updateCharts();
   updatePainPoints();
+  updatePositiveInsights();
   renderTable();
   document.getElementById('recordsPill').textContent = filteredData.length + ' records';
+  updateClientBanner();
+}
+
+function updateClientBanner() {
+  const client = document.getElementById('fClient').value;
+  const banner = document.getElementById('clientBanner');
+  if (!client) { banner.style.display = 'none'; return; }
+  banner.style.display = 'flex';
+  document.getElementById('clientBannerName').textContent = client;
+  const total = filteredData.length;
+  const resolved = filteredData.filter(isResolved).length;
+  const wip = filteredData.filter(r => normStatus(r.delivery_status) === 'wip').length;
+  const p1 = filteredData.filter(r => String(r.priority||'').replace('.0','') === '1').length;
+  document.getElementById('clientBannerStats').innerHTML =
+    `<strong>${total}</strong> issues &nbsp;·&nbsp; <strong style="color:var(--green)">${resolved}</strong> resolved &nbsp;·&nbsp; <strong style="color:var(--orange)">${wip}</strong> WIP` +
+    (p1 > 0 ? ` &nbsp;·&nbsp; <strong style="color:var(--red)">${p1} P1</strong>` : '');
+}
+
+function clearClientFilter() {
+  document.getElementById('fClient').value = '';
+  applyFilters();
 }
 
 // ════════════════════════════════════════════════
@@ -884,7 +1078,6 @@ function updateKPIs() {
   const resolved = filteredData.filter(isResolved).length;
   const wip = filteredData.filter(r => normStatus(r.delivery_status)==='wip').length;
   const p1 = filteredData.filter(r => String(r.priority||'').replace('.0','')==='1').length;
-  const accounts = new Set(filteredData.map(r => (r.account||'').toLowerCase().trim()).filter(Boolean)).size;
 
   setText('kTotal', total);
   setText('kTotalSub', RAW_DATA.length + ' total records');
@@ -894,8 +1087,6 @@ function updateKPIs() {
   setText('kWipPct', total ? Math.round(wip/total*100)+'% still open' : '—');
   setText('kP1', p1);
   setText('kP1Sub', p1 > 0 ? 'Needs immediate attention' : 'No critical issues');
-  setText('kAccounts', accounts);
-  setText('kAccountsSub', 'Unique client accounts');
 }
 
 // ════════════════════════════════════════════════
@@ -1026,7 +1217,7 @@ function updatePainPoints() {
       const text = [r.email_subject, r.remarks, r.issue_details].filter(Boolean).join(' ');
       return p.re.test(text);
     });
-    return { ...p, count: matches.length, accounts: new Set(matches.map(r=>(r.account||'').toLowerCase())).size };
+    return { ...p, count: matches.length, accounts: new Set(matches.map(r=>normaliseClient(r.account)||'').filter(Boolean)).size };
   }).filter(p => p.count > 0).sort((a,b) => b.count - a.count);
 
   const top = scored.slice(0, 9);
@@ -1042,8 +1233,8 @@ function updatePainPoints() {
 
   // Build paragraph
   const intro = `Based on <strong>${total} issues</strong> in the current view, the support team is dealing with <strong>${top.length} recurring pain areas</strong>. 
-The most critical pain point is <strong>${t.name}</strong>, appearing in <strong>${t.count} tickets (${pct0}% of all issues)</strong> across <strong>${t.accounts} client accounts</strong> — indicating a systemic gap requiring immediate attention. 
-${top3.length > 1 ? `<strong>${top3[1].name}</strong> (${top3[1].count} occurrences, ${top3[1].accounts} accounts) and <strong>${top3[2]?.name||'—'}</strong> ${top3[2] ? '('+top3[2].count+' occurrences)' : ''} also rank among the top recurring concerns.` : ''}
+The most critical pain point is <strong>${t.name}</strong>, appearing in <strong>${t.count} tickets (${pct0}% of all issues)</strong>${t.accounts > 1 ? ' across <strong>' + t.accounts + ' client accounts</strong>' : ''} — indicating a systemic gap requiring immediate attention. 
+${top3.length > 1 ? `<strong>${top3[1].name}</strong> (${top3[1].count} occurrences${top3[1].accounts > 1 ? ', ' + top3[1].accounts + ' accounts' : ''}) and <strong>${top3[2]?.name||'—'}</strong> ${top3[2] ? '('+top3[2].count+' occurrences)' : ''} also rank among the top recurring concerns.` : ''}
 Together, the top three pain points account for <strong>${top3.reduce((a,b)=>a+b.count,0)} issues (${Math.round(top3.reduce((a,b)=>a+b.count,0)/total*100)}% of the total workload)</strong>, suggesting that resolving these proactively through documentation, self-service guides or product fixes could significantly reduce support ticket volume.`;
 
   document.getElementById('painIntro').innerHTML = intro;
@@ -1062,7 +1253,7 @@ Together, the top three pain points account for <strong>${top3.reduce((a,b)=>a+b
       <div class="pain-item-tags">
         <span class="pain-tag tag-red">${p.count} tickets</span>
         <span class="pain-tag tag-org">${pct}% of issues</span>
-        <span class="pain-tag tag-blue">${p.accounts} accounts</span>
+        <span class="pain-tag tag-blue">${p.accounts} ${p.accounts === 1 ? 'client' : 'accounts'}</span>
       </div>
     </div>`;
   }).join('');
@@ -1204,6 +1395,211 @@ function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'
 // ════════════════════════════════════════════════
 rebuildFilterDropdowns();
 applyFilters();
+// ════════════════════════════════════════════════
+//  POSITIVE INSIGHTS
+// ════════════════════════════════════════════════
+function updatePositiveInsights() {
+  const el = document.getElementById('positiveIntro');
+  const grid = document.getElementById('positiveItems');
+  const total = filteredData.length;
+
+  if (!total) {
+    el.innerHTML = '<em>No data available for the current filter selection.</em>';
+    grid.innerHTML = '';
+    return;
+  }
+
+  // ── helpers ──
+  const gs = (r, k) => (r[k] || '').toString().trim();
+  const isRes = r => gs(r,'pending_with').toLowerCase() === 'completed' ||
+    ['closed','on or before time'].includes(gs(r,'delivery_status').toLowerCase());
+
+  const resolved   = filteredData.filter(isRes);
+  const resolvedPct = Math.round(resolved.length / total * 100);
+
+  // On-time delivery (On or Before Time)
+  const onTime    = filteredData.filter(r => gs(r,'delivery_status').toLowerCase().includes('before time'));
+  const onTimePct = Math.round(onTime.length / total * 100);
+
+  // Same-day resolution
+  const sameDay   = filteredData.filter(r => r.date_received && r.completion_date && r.date_received === r.completion_date && isRes(r));
+  const sameDayPct= Math.round(sameDay.length / total * 100);
+
+  // P1 critical resolution
+  const p1All  = filteredData.filter(r => String(r.priority||'').replace('.0','') === '1');
+  const p1Res  = p1All.filter(isRes);
+  const p1Pct  = p1All.length ? Math.round(p1Res.length / p1All.length * 100) : null;
+
+  // Best handler by resolution rate (min 5)
+  const hmap = {};
+  filteredData.forEach(r => {
+    const h = gs(r,'handled_by'); if (!h || h === '.') return;
+    if (!hmap[h]) hmap[h] = { total:0, res:0 };
+    hmap[h].total++;
+    if (isRes(r)) hmap[h].res++;
+  });
+  const topHandlers = Object.entries(hmap)
+    .filter(([,v]) => v.total >= 5)
+    .map(([h,v]) => ({ h, pct: Math.round(v.res/v.total*100), total: v.total, res: v.res }))
+    .sort((a,b) => b.pct - a.pct || b.res - a.res);
+  const bestHandler = topHandlers[0] || null;
+
+  // Best request type resolution (min 5)
+  const tmap = {};
+  filteredData.forEach(r => {
+    const t = gs(r,'type'); if (!t || t === '.') return;
+    if (!tmap[t]) tmap[t] = { total:0, res:0 };
+    tmap[t].total++;
+    if (isRes(r)) tmap[t].res++;
+  });
+  const topTypes = Object.entries(tmap)
+    .filter(([,v]) => v.total >= 5)
+    .map(([t,v]) => ({ t, pct: Math.round(v.res/v.total*100), total: v.total }))
+    .sort((a,b) => b.pct - a.pct || b.total - a.total);
+  const bestType = topTypes[0] || null;
+
+  // Most active + high-resolution client (min 3 issues)
+  const cmap = {};
+  filteredData.forEach(r => {
+    const c = normaliseClient(r.account); if (!c) return;
+    if (!cmap[c]) cmap[c] = { total:0, res:0 };
+    cmap[c].total++;
+    if (isRes(r)) cmap[c].res++;
+  });
+  const topClients = Object.entries(cmap)
+    .filter(([,v]) => v.total >= 3 && v.res === v.total)
+    .sort((a,b) => b[1].total - a[1].total);
+  const perfectClient = topClients[0] || null;
+
+  // Streak: best consecutive resolved months
+  const monthMap = {};
+  filteredData.forEach(r => {
+    const d = r.date_received || ''; if (d.length < 7) return;
+    const m = d.slice(0,7);
+    if (!monthMap[m]) monthMap[m] = { total:0, res:0 };
+    monthMap[m].total++;
+    if (isRes(r)) monthMap[m].res++;
+  });
+  const months = Object.entries(monthMap).sort((a,b) => a[0].localeCompare(b[0]));
+  const bestMonth = months.sort((a,b) => {
+    const pa = Math.round(a[1].res/a[1].total*100);
+    const pb = Math.round(b[1].res/b[1].total*100);
+    return pb - pa || b[1].total - a[1].total;
+  })[0] || null;
+  const bestMonthLabel = bestMonth ? new Date(bestMonth[0]+'-01').toLocaleString('en',{month:'long',year:'numeric'}) : null;
+  const bestMonthPct   = bestMonth ? Math.round(bestMonth[1].res/bestMonth[1].total*100) : 0;
+
+  // ── Summary paragraph ──
+  const intro = `Across <strong>${total} issues</strong> in the current view, the support team has delivered strong results. 
+<strong>${resolved.length} issues (${resolvedPct}%)</strong> have been fully resolved, with <strong>${onTime.length} (${onTimePct}%)</strong> completed on or before the committed deadline — a clear sign of reliable delivery.
+${sameDay.length > 0 ? `An impressive <strong>${sameDay.length} issues (${sameDayPct}%)</strong> were resolved on the same day they were received, reflecting the team's responsiveness.` : ''}
+${p1Pct !== null && p1Pct >= 70 ? `Even for <strong>P1 critical issues</strong>, the resolution rate stands at <strong>${p1Pct}%</strong> — demonstrating strong escalation handling.` : ''}
+${bestHandler ? `<strong>${bestHandler.h}</strong> leads the team with a <strong>${bestHandler.pct}% resolution rate</strong> across ${bestHandler.total} tickets.` : ''}`;
+
+  el.innerHTML = intro;
+
+  // ── Build insight cards ──
+  const cards = [];
+
+  // Card 1: Overall resolution
+  cards.push({
+    emoji: '✅', color: 'green', title: 'Strong Overall Resolution Rate',
+    desc: `${resolved.length} out of ${total} issues have been successfully resolved across the filtered dataset.`,
+    barPct: resolvedPct, barColor: '#059669',
+    tags: [
+      { cls:'tag-green', text: `${resolvedPct}% resolved` },
+      { cls:'tag-teal',  text: `${resolved.length} issues closed` },
+    ]
+  });
+
+  // Card 2: On-time delivery
+  if (onTime.length > 0) cards.push({
+    emoji: '⏱️', color: 'blue', title: 'Excellent On-Time Delivery',
+    desc: `${onTime.length} requests were completed on or before the committed deadline — consistent performance under SLA.`,
+    barPct: onTimePct, barColor: '#0284c7',
+    tags: [
+      { cls:'tag-blue2',   text: `${onTimePct}% on-time` },
+      { cls:'tag-green',   text: `${onTime.length} tickets` },
+    ]
+  });
+
+  // Card 3: Same-day resolution
+  if (sameDay.length > 0) cards.push({
+    emoji: '⚡', color: 'teal', title: 'Fast Same-Day Resolutions',
+    desc: `${sameDay.length} issues were received and resolved on the same day — showcasing the team's quick-response capability.`,
+    barPct: sameDayPct, barColor: '#0d9488',
+    tags: [
+      { cls:'tag-teal',  text: `${sameDay.length} same-day` },
+      { cls:'tag-green', text: `${sameDayPct}% of issues` },
+    ]
+  });
+
+  // Card 4: P1 resolution
+  if (p1Pct !== null && p1All.length >= 3) cards.push({
+    emoji: '🚨', color: 'purple', title: 'Critical Issues Well-Managed',
+    desc: `${p1Res.length} of ${p1All.length} P1 critical issues resolved — the team consistently prioritises and escalates high-severity tickets effectively.`,
+    barPct: p1Pct, barColor: '#7c3aed',
+    tags: [
+      { cls:'tag-purple2', text: `${p1Pct}% P1 resolved` },
+      { cls:'tag-green',   text: `${p1Res.length}/${p1All.length} critical` },
+    ]
+  });
+
+  // Card 5: Top handler
+  if (bestHandler) cards.push({
+    emoji: '🏆', color: 'orange', title: `Star Performer: ${bestHandler.h}`,
+    desc: `Resolved ${bestHandler.res} of ${bestHandler.total} assigned tickets with a ${bestHandler.pct}% success rate — the highest in the team for the current view.`,
+    barPct: bestHandler.pct, barColor: '#d97706',
+    tags: [
+      { cls:'tag-green', text: `${bestHandler.pct}% resolution` },
+      { cls:'tag-blue2', text: `${bestHandler.total} tickets handled` },
+    ]
+  });
+
+  // Card 6: Best type
+  if (bestType) cards.push({
+    emoji: '📌', color: 'indigo', title: `"${bestType.t}" Requests: Near-Perfect Handling`,
+    desc: `${bestType.pct}% of all "${bestType.t}" requests have been resolved — the most consistently handled request type in the system.`,
+    barPct: bestType.pct, barColor: '#4f46e5',
+    tags: [
+      { cls:'tag-purple2', text: `${bestType.pct}% resolved` },
+      { cls:'tag-blue2',   text: `${bestType.total} requests` },
+    ]
+  });
+
+  // Card 7: Perfect client
+  if (perfectClient) cards.push({
+    emoji: '⭐', color: 'teal', title: `${perfectClient[0]}: 100% Resolution`,
+    desc: `All ${perfectClient[1].total} issues raised by ${perfectClient[0]} have been fully resolved — a model account relationship.`,
+    barPct: 100, barColor: '#0d9488',
+    tags: [
+      { cls:'tag-green', text: `100% resolved` },
+      { cls:'tag-teal',  text: `${perfectClient[1].total} issues` },
+    ]
+  });
+
+  // Card 8: Best month
+  if (bestMonth && bestMonthPct >= 80) cards.push({
+    emoji: '📅', color: 'blue', title: `Best Month: ${bestMonthLabel}`,
+    desc: `${bestMonthLabel} had the highest resolution rate at ${bestMonthPct}% with ${bestMonth[1].total} total issues — the team's strongest period.`,
+    barPct: bestMonthPct, barColor: '#0284c7',
+    tags: [
+      { cls:'tag-blue2', text: `${bestMonthPct}% that month` },
+      { cls:'tag-green', text: `${bestMonth[1].res} resolved` },
+    ]
+  });
+
+  // Render (max 6 cards in 3-col grid)
+  const show = cards.slice(0, 6);
+  grid.innerHTML = show.map(c => `
+    <div class="positive-item ${c.color}">
+      <div class="pi-emoji">${c.emoji}</div>
+      <div class="pi-title">${esc(c.title)}</div>
+      <div class="pi-desc">${esc(c.desc)}</div>
+      <div class="pi-bar-wrap"><div class="pi-bar" style="width:${c.barPct}%;background:${c.barColor}"></div></div>
+      <div class="pi-tags">${c.tags.map(t => `<span class="pi-tag ${t.cls}">${t.text}</span>`).join('')}</div>
+    </div>`).join('');
+}
 </script>
 </body>
 </html>
